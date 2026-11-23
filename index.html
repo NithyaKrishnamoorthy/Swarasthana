@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swarasthana — Daily Carnatic Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f5eee2; --card:#fffaf2; --ink:#2a1c14; --muted:#7a6656; --line:#e4d6c3;
+  --kumkum:#a3302b; --kumkum-soft:#f3dcd6; --gold:#c8961b; --gold-soft:#f6e7bf;
+  --leaf:#3f7a4a; --leaf-soft:#dcebd9; --amber:#c27a12; --amber-soft:#f6e3c4;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;font-size:15px;line-height:1.45}
+button,select,input{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 18px 48px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+h1{font-family:Fraunces,serif;font-weight:700;font-size:32px;margin:0;letter-spacing:-.01em}
+h1 span{color:var(--kumkum)}
+.tag{color:var(--muted);margin-top:2px}
+.today{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;display:flex;gap:8px;align-items:center;font-size:14px}
+.pill b{font-weight:600}
+.ring{width:26px;height:26px}
+.layout{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.panel h2{font-family:Fraunces,serif;font-size:17px;font-weight:600;margin:0 0 10px}
+details.settings>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+details.settings>summary::-webkit-details-marker{display:none}
+details.settings>summary h2{margin:0}
+details.settings>summary .chev{transition:transform .2s;color:var(--muted)}
+details.settings[open]>summary .chev{transform:rotate(180deg)}
+.field{margin-top:14px}
+.field>label:not(.check),.flabel{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;font-weight:600}
+select,input[type=number]{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.seg{display:flex;background:#f1e7d8;border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;padding:7px 6px;border-radius:8px;cursor:pointer;font-size:13.5px;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 9px;cursor:pointer;font-size:13.5px;min-width:38px;text-align:center}
+.chip.on{background:var(--kumkum);border-color:var(--kumkum);color:#fff}
+.chip:disabled{opacity:.5;cursor:default}
+.scale{font-family:Fraunces,serif;font-size:16px;margin-top:8px;color:var(--muted);letter-spacing:.02em}
+input[type=range]{width:100%;accent-color:var(--kumkum)}
+.check{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:14px;cursor:pointer}
+.check input{accent-color:var(--kumkum);width:16px;height:16px}
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+
+/* stage */
+.stage{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;position:relative;overflow:hidden}
+.stage::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 220px at 50% 0%,var(--gold-soft),transparent 70%);opacity:.6;pointer-events:none}
+.stagetop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;position:relative}
+.ctx{color:var(--muted);font-size:14px}
+.ctx b{color:var(--ink);font-weight:600}
+.card{position:relative;min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 8px 14px;text-align:center}
+.big{font-family:Fraunces,serif;font-weight:600;font-size:min(128px,22vw);line-height:1.15;display:flex;gap:.28em;flex-wrap:wrap;justify-content:center}
+.big.phrase{font-size:min(72px,11vw);gap:.4em}
+.sw{display:inline-flex;align-items:baseline;transition:color .15s,transform .15s}
+.sw .l{position:relative;display:inline-block}
+.sw sub{font-size:.38em;vertical-align:baseline;margin-left:.04em;color:var(--muted);font-weight:500}
+.sw.o1 .l::before,.sw.o-1 .l::after{content:"";position:absolute;left:50%;width:.11em;height:.11em;border-radius:50%;background:currentColor;transform:translateX(-50%)}
+.sw.o1 .l::before{top:.02em}
+.sw.o-1 .l::after{bottom:.02em}
+.sw.now{color:var(--kumkum);transform:translateY(-4px)}
+.sw.done{color:#b9a796}
+.sub2{color:var(--muted);font-size:14px;margin-top:6px;min-height:20px}
+.status{margin-top:8px;font-size:15px;min-height:22px;font-weight:500}
+.status.good{color:var(--leaf)} .status.mid{color:var(--amber)} .status.bad{color:var(--kumkum)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;position:relative;margin-top:6px}
+.btn{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px 16px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{border-color:#cdb9a1}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.primary:hover{background:#3d2a1e}
+.btn.on{background:var(--gold-soft);border-color:var(--gold)}
+.btn kbd{font-family:inherit;font-size:11px;border:1px solid currentColor;border-radius:4px;padding:0 4px;opacity:.55}
+.rate{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;position:relative}
+.rate .btn{min-width:120px;justify-content:center}
+.rate .g{background:var(--leaf-soft);border-color:#b8d4b2}
+.rate .m{background:var(--amber-soft);border-color:#e8c992}
+.rate .b{background:var(--kumkum-soft);border-color:#e6b8ae}
+.rate.hidden{visibility:hidden}
+
+/* meter */
+.meter{margin-top:16px;border-top:1px dashed var(--line);padding-top:14px;position:relative}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.mread{font-family:Fraunces,serif;font-size:20px;font-weight:600}
+.mread small{font-family:"DM Sans";font-size:13px;color:var(--muted);font-weight:400;margin-left:6px}
+.track{position:relative;height:38px;margin-top:10px;background:linear-gradient(90deg,var(--kumkum-soft),var(--amber-soft) 30%,var(--leaf-soft) 50%,var(--amber-soft) 70%,var(--kumkum-soft));border-radius:10px}
+.zone{position:absolute;top:0;bottom:0;background:rgba(63,122,74,.22);border-left:2px solid var(--leaf);border-right:2px solid var(--leaf)}
+.needle{position:absolute;top:-4px;bottom:-4px;width:4px;margin-left:-2px;border-radius:2px;background:var(--ink);transition:left .08s linear;left:50%}
+.needle.off{opacity:.15}
+.ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px}
+.hold{height:5px;background:#efe4d4;border-radius:3px;margin-top:8px;overflow:hidden}
+.hold>div{height:100%;width:0;background:var(--leaf);transition:width .1s}
+.micmsg{font-size:13px;color:var(--muted);margin-top:8px}
+
+/* stats */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+@media (max-width:700px){.grid2{grid-template-columns:1fr}}
+.acc{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.acell{border-radius:10px;padding:8px 4px 6px;text-align:center;border:1px solid var(--line);background:#fff}
+.acell .n{font-family:Fraunces,serif;font-size:19px;font-weight:600}
+.acell .n sub{font-size:.6em;color:inherit;opacity:.7}
+.acell .p{font-size:12px;color:var(--muted)}
+.hist{display:flex;align-items:flex-end;gap:5px;height:110px;margin-top:6px}
+.hist .d{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.hist .bar{width:100%;border-radius:5px 5px 2px 2px;background:#e9dcc8;min-height:3px}
+.hist .bar.met{background:var(--gold)}
+.hist .bar.today{outline:2px solid var(--ink);outline-offset:1px}
+.hist .lbl{font-size:10.5px;color:var(--muted)}
+.legend{font-size:12.5px;color:var(--muted);margin-top:8px}
+.kb{font-size:12.5px;color:var(--muted);text-align:center;margin-top:14px;position:relative}
+.linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:12.5px;padding:0}
+.dialog{position:fixed;inset:0;background:rgba(42,28,20,.35);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
+.dialog.show{display:flex}
+.dialog .box{background:var(--card);border-radius:var(--r);padding:20px;max-width:360px;border:1px solid var(--line)}
+.dialog .box p{margin:0 0 14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Swara<span>sthana</span></h1>
+      <div class="tag">Daily drill for clean, steady swara positions against the shruti</div>
+    </div>
+    <div class="today">
+      <div class="pill" title="Today's practice toward your daily goal">
+        <svg class="ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" stroke="#eadcc8" stroke-width="4"/><circle id="ringArc" cx="18" cy="18" r="15" fill="none" stroke="#c8961b" stroke-width="4" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90 18 18)" pathLength="100"/></svg>
+        <span><b id="todayMin">0</b> / <span id="goalMin">10</span> min</span>
+      </div>
+      <div class="pill">🔥 <span><b id="streak">0</b>-day streak</span></div>
+      <div class="pill"><span><b id="todayReps">0</b> swaras today</span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="panel">
+      <details class="settings" id="settingsBox" open>
+        <summary><h2>Practice setup</h2><span class="chev">▾</span></summary>
+
+        <div class="field">
+          <label>Shruti (Sa)</label>
+          <div class="row">
+            <select id="tonic"></select>
+          </div>
+          <div class="field" style="margin-top:8px">
+            <span class="flabel" style="margin-bottom:2px">Fine tune: <span id="fineVal">0</span>¢</span>
+            <input type="range" id="fine" min="-50" max="50" step="1" value="0">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Raga</label>
+          <select id="raga"></select>
+          <div class="scale" id="scaleLine"></div>
+          <div id="customBox" style="display:none;margin-top:8px">
+            <div class="chips" id="customChips"></div>
+            <div class="hint">Tap swarasthanas to include. Sa is always on.</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Octaves</label>
+          <div class="chips" id="octChips">
+            <button class="chip" data-o="-1">Mandra</button>
+            <button class="chip" data-o="0">Madhya</button>
+            <button class="chip" data-o="1">Tara</button>
+          </div>
+          <div class="hint">Madhya includes upper Ṡ.</div>
+        </div>
+
+        <div class="field">
+          <label>Drill</label>
+          <div class="seg" id="modeSeg"><button data-v="single">One swara</button><button data-v="phrase">Phrase</button></div>
+          <div id="phraseOpts" class="row" style="margin-top:8px">
+            <div><span class="flabel">Length</span><select id="len"></select></div>
+            <div><span class="flabel">Max leap</span><select id="leap">
+              <option value="1">Steps only</option><option value="2">Up to 3rd</option><option value="4">Up to 5th</option><option value="99">Any jump</option></select></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Order</label>
+          <div class="seg" id="orderSeg"><button data-v="sing">Sing → check</button><button data-v="listen">Listen → sing</button></div>
+          <div class="hint">“Sing → check” tests you: sing first, then hear the reference.</div>
+        </div>
+
+        <div class="field">
+          <label>Sound</label>
+          <div class="row">
+            <div><span class="flabel">Drone</span><select id="droneNote"><option value="auto">Auto</option><option value="P">Pa</option><option value="M">Ma</option><option value="N">Ni</option></select></div>
+            <div><span class="flabel">Reference</span><select id="tone"><option value="smooth">Smooth</option><option value="pluck">Veena-ish</option></select></div>
+          </div>
+          <span class="flabel" style="margin-top:10px">Drone volume</span><input type="range" id="droneVol" min="0" max="1" step="0.01">
+          <span class="flabel" style="margin-top:6px">Reference volume</span><input type="range" id="refVol" min="0" max="1" step="0.01">
+          <div class="row" style="margin-top:6px">
+            <div><span class="flabel">Tuning</span><select id="tuning"><option value="just">Just (natural)</option><option value="equal">Equal tempered</option></select></div>
+            <div><span class="flabel">Phrase tempo</span><select id="bpm"><option>45</option><option>60</option><option>80</option><option>100</option></select></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Display</label>
+          <label class="check"><input type="checkbox" id="showNum"> Show variant numbers (R₁, G₃…)</label>
+          <label class="check"><input type="checkbox" id="sung"> Show as sa ri ga…</label>
+          <label class="check"><input type="checkbox" id="western"> Show Western pitch</label>
+        </div>
+
+        <div class="field">
+          <label>Hands-free & goal</label>
+          <div class="row">
+            <div><span class="flabel">Sing time</span><select id="gap"><option value="3">3 s</option><option value="4">4 s</option><option value="6">6 s</option><option value="8">8 s</option></select></div>
+            <div><span class="flabel">Daily goal</span><select id="goal"><option>5</option><option>10</option><option>15</option><option>20</option><option>30</option></select></div>
+          </div>
+          <span class="flabel" style="margin-top:10px">Mic tolerance: ±<span id="tolVal"></span>¢</span>
+          <input type="range" id="tol" min="5" max="30" step="1">
+        </div>
+      </details>
+    </aside>
+
+    <main>
+      <section class="stage">
+        <div class="stagetop">
+          <div class="ctx" id="ctx"></div>
+          <div class="row" style="flex:0 0 auto;gap:8px">
+            <button class="btn" id="droneBtn">◉ Drone <kbd>D</kbd></button>
+            <button class="btn" id="handsBtn">▶ Hands-free <kbd>H</kbd></button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="big" id="big"></div>
+          <div class="sub2" id="sub2"></div>
+          <div class="status" id="status"></div>
+        </div>
+
+        <div class="controls">
+          <button class="btn" id="playBtn">♪ Hear <kbd>R</kbd></button>
+          <button class="btn primary" id="checkBtn">Check <kbd>Space</kbd></button>
+          <button class="btn" id="nextBtn">Skip → <kbd>Enter</kbd></button>
+        </div>
+        <div class="rate hidden" id="rate">
+          <button class="btn g" data-v="1">Spot on <kbd>1</kbd></button>
+          <button class="btn m" data-v="0.5">Close <kbd>2</kbd></button>
+          <button class="btn b" data-v="0">Off <kbd>3</kbd></button>
+        </div>
+
+        <div class="meter">
+          <div class="mhead">
+            <div class="mread" id="mread">Pitch check <small>mic off</small></div>
+            <button class="btn" id="micBtn">🎙 Enable mic</button>
+          </div>
+          <div class="track" id="track"><div class="zone" id="zone"></div><div class="needle off" id="needle"></div></div>
+          <div class="ticks"><span>−50¢ flat</span><span>0</span><span>sharp +50¢</span></div>
+          <div class="hold"><div id="holdBar"></div></div>
+          <div class="micmsg" id="micmsg">Use headphones so the mic hears you, not the drone. Hold the swara inside the green band to lock it in.</div>
+        </div>
+        <div class="kb">Space check / next · 1 2 3 rate · R hear · D drone · H hands-free</div>
+      </section>
+
+      <div class="grid2">
+        <section class="panel">
+          <h2>Swarasthana accuracy</h2>
+          <div class="acc" id="acc"></div>
+          <div class="legend">Weaker swaras come up more often. <button class="linkbtn" id="resetBtn">Reset stats</button></div>
+        </section>
+        <section class="panel">
+          <h2>Last 14 days</h2>
+          <div class="hist" id="hist"></div>
+          <div class="legend">Gold = daily goal met. Time counts while you're actively practising.</div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="dialog" id="dlg"><div class="box"><p>Clear all accuracy stats and practice history?</p><div class="row"><button class="btn" id="dlgNo">Cancel</button><button class="btn primary" id="dlgYes">Clear</button></div></div></div>
+
+<script>
+(() => {
+// ---------- music data ----------
+const POS_NAMES = ['S','R1','R2','G2','G3','M1','M2','P','D1','D2','N2','N3'];
+const NAME_POS = {S:0,R1:1,R2:2,G1:2,R3:3,G2:3,G3:4,M1:5,M2:6,P:7,D1:8,D2:9,N1:9,D3:10,N2:10,N3:11};
+const JUST = [1,16/15,9/8,6/5,5/4,4/3,45/32,3/2,8/5,5/3,16/9,15/8];
+const SUNG = {S:'sa',R:'ri',G:'ga',M:'ma',P:'pa',D:'da',N:'ni'};
+const NOTES = [['C','1'],['C♯','1½'],['D','2'],['D♯','2½'],['E','3'],['F','4'],['F♯','4½'],['G','5'],['G♯','5½'],['A','6'],['A♯','6½'],['B','7']];
+const WEST = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+const RAGAS = [
+  {id:'mmg',name:'Mayamalavagowla',info:'15th mela',sw:'S R1 G3 M1 P D1 N3'},
+  {id:'shank',name:'Shankarabharanam',info:'29th mela',sw:'S R2 G3 M1 P D2 N3'},
+  {id:'kalyani',name:'Kalyani',info:'65th mela',sw:'S R2 G3 M2 P D2 N3'},
+  {id:'khp',name:'Kharaharapriya',info:'22nd mela',sw:'S R2 G2 M1 P D2 N2'},
+  {id:'hari',name:'Harikambhoji',info:'28th mela',sw:'S R2 G3 M1 P D2 N2'},
+  {id:'nata',name:'Natabhairavi',info:'20th mela',sw:'S R2 G2 M1 P D1 N2'},
+  {id:'todi',name:'Hanumatodi',info:'8th mela',sw:'S R1 G2 M1 P D1 N2'},
+  {id:'chakra',name:'Chakravakam',info:'16th mela',sw:'S R1 G3 M1 P D2 N2'},
+  {id:'simhe',name:'Simhendramadhyamam',info:'57th mela',sw:'S R2 G2 M2 P D1 N3'},
+  {id:'kama',name:'Kamavardhini (Pantuvarali)',info:'51st mela',sw:'S R1 G3 M2 P D1 N3'},
+  {id:'mohanam',name:'Mohanam',info:'janya · 28',sw:'S R2 G3 P D2'},
+  {id:'hamsa',name:'Hamsadhwani',info:'janya · 29',sw:'S R2 G3 P N3'},
+  {id:'hindolam',name:'Hindolam',info:'janya · 20',sw:'S G2 M1 D1 N2'},
+  {id:'abhogi',name:'Abhogi',info:'janya · 22',sw:'S R2 G2 M1 D2'},
+  {id:'saveri',name:'Shuddha Saveri',info:'janya · 29',sw:'S R2 M1 P D2'},
+  {id:'madhya',name:'Madhyamavati',info:'janya · 22',sw:'S R2 M1 P N2'},
+  {id:'all',name:'All 12 swarasthanas',info:'chromatic',sw:'S R1 R2 G2 G3 M1 M2 P D1 D2 N2 N3'},
+  {id:'custom',name:'Custom…',info:'pick your own',sw:''},
+];
+
+// ---------- storage ----------
+const KEY = 'swarasthana.v1';
+const DEFAULTS = {tonic:1,fine:0,raga:'mmg',custom:[0,2,4,5,7,9,11],oct:[0],mode:'single',len:4,leap:2,order:'sing',
+  droneNote:'auto',tone:'smooth',droneVol:.55,refVol:.7,tuning:'just',bpm:60,showNum:true,sung:false,western:false,gap:4,goal:10,tol:15};
+let S = {settings:{...DEFAULTS}, stats:{}, days:{}};
+try { const raw = localStorage.getItem(KEY); if (raw) { const d = JSON.parse(raw); S.settings = {...DEFAULTS, ...(d.settings||{})}; S.stats = d.stats||{}; S.days = d.days||{}; } } catch(e){}
+let dirty = false;
+function save(){ dirty = true; }
+setInterval(()=>{ if(!dirty) return; dirty=false; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }, 3000);
+window.addEventListener('pagehide', ()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} });
+const cfg = S.settings;
+
+const $ = id => document.getElementById(id);
+const dayKey = (d=new Date()) => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function today(){ const k=dayKey(); return S.days[k] || (S.days[k]={sec:0,reps:0}); }
+
+// ---------- pitch helpers ----------
+function tonicHz(){ return 130.8128 * Math.pow(2, cfg.tonic/12) * Math.pow(2, cfg.fine/1200); }
+function ratio(pos){ return cfg.tuning==='equal' ? Math.pow(2,pos/12) : JUST[pos]; }
+function freqOf(it){ return tonicHz()*ratio(it.pos)*Math.pow(2,it.oct); }
+function westernOf(f){ const m = 69+12*Math.log2(f/440); const r=Math.round(m); const c=Math.round((m-r)*100); return WEST[((r%12)+12)%12]+(Math.floor(r/12)-1)+(c? (c>0?' +':' ')+c+'¢':''); }
+
+function ragaSwaras(){
+  const r = RAGAS.find(x=>x.id===cfg.raga) || RAGAS[0];
+  if (r.id==='custom'){ const set=[...new Set([0,...cfg.custom])].sort((a,b)=>a-b); return set.map(p=>POS_NAMES[p]); }
+  return r.sw.split(' ');
+}
+function pool(){
+  const names = ragaSwaras(); const items=[];
+  const octs = [...cfg.oct].sort();
+  for (const o of octs) for (const n of names) items.push({name:n,pos:NAME_POS[n],oct:o});
+  if (octs.includes(0) && !octs.includes(1)) items.push({name:'S',pos:0,oct:1});
+  items.sort((a,b)=>(a.pos+12*a.oct)-(b.pos+12*b.oct));
+  return items;
+}
+function swHTML(it, extra=''){
+  const L = it.name[0], num = it.name.slice(1);
+  const letter = cfg.sung ? SUNG[L] : L;
+  return `<span class="sw o${it.oct} ${extra}"><span class="l">${letter}</span>${cfg.showNum&&num?`<sub>${num}</sub>`:''}</span>`;
+}
+
+// ---------- adaptive selection ----------
+function stat(pos){ return S.stats[pos]; }
+function weight(pos){ const s=stat(pos); if(!s||!s.n) return 2.2; return 0.5 + 2.6*(1-s.ema) + (s.n<5?0.6:0); }
+function wpick(arr, wf){ const ws=arr.map(wf); let t=ws.reduce((a,b)=>a+b,0)*Math.random(); for(let i=0;i<arr.length;i++){ t-=ws[i]; if(t<=0) return arr[i]; } return arr[arr.length-1]; }
+let last = null;
+function makePrompt(){
+  const P = pool();
+  if (!P.length) return [];
+  if (cfg.mode==='single'){
+    const cand = P.length>1 ? P.filter(it=>!(last && it.pos===last.pos && it.oct===last.oct)) : P;
+    const it = wpick(cand, it=>weight(it.pos)); last = it; return [it];
+  }
+  const seq=[]; let idx = P.indexOf(wpick(P, it=>weight(it.pos)));
+  seq.push(P[idx]);
+  for (let k=1;k<cfg.len;k++){
+    const opts=[]; for(let j=0;j<P.length;j++){ const d=Math.abs(j-idx); if(d>0 && d<=cfg.leap) opts.push(j); }
+    if(!opts.length) break;
+    idx = wpick(opts, j=>weight(P[j].pos)); seq.push(P[idx]);
+  }
+  last = seq[seq.length-1];
+  return seq;
+}
+function record(items, v){
+  const seen = new Set();
+  for (const it of items){ if(seen.has(it.pos)) continue; seen.add(it.pos);
+    const s = S.stats[it.pos] || (S.stats[it.pos]={n:0,sum:0,ema:v});
+    s.n++; s.sum+=v; s.ema = s.n===1 ? v : s.ema*0.72 + v*0.28; }
+  save(); renderAcc();
+}
+
+// ---------- audio ----------
+let ctx=null, master, droneBus, refBus;
+function ensureAudio(){
+  if (!ctx){
+    ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const comp = ctx.createDynamicsCompressor(); comp.threshold.value=-14; comp.ratio.value=3;
+    master = ctx.createGain(); master.gain.value=0.9; master.connect(comp); comp.connect(ctx.destination);
+    droneBus = ctx.createGain(); droneBus.gain.value = cfg.droneVol; droneBus.connect(master);
+    refBus = ctx.createGain(); refBus.gain.value = cfg.refVol; refBus.connect(master);
+  }
+  if (ctx.state==='suspended') ctx.resume().catch(()=>{});
+  return ctx;
+}
+function pluck(f, t, bus, amp=0.16, len=4.6){
+  const g = ctx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(amp,t+0.012); g.gain.exponentialRampToValueAtTime(0.0008,t+len);
+  const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.Q.value=0.7; lp.frequency.setValueAtTime(Math.min(5200,f*22),t); lp.frequency.exponentialRampToValueAtTime(Math.max(500,f*4),t+len*0.8);
+  const pk = ctx.createBiquadFilter(); pk.type='peaking'; pk.Q.value=7; pk.gain.value=11; pk.frequency.setValueAtTime(f*3,t); pk.frequency.exponentialRampToValueAtTime(Math.min(7000,f*14),t+len*0.9);
+  lp.connect(pk); pk.connect(g); g.connect(bus);
+  [[ 'sawtooth',-3,0.55],['sawtooth',3,0.55],['sine',0,0.8]].forEach(([type,det,a])=>{
+    const o=ctx.createOscillator(); o.type=type; o.frequency.value=f; o.detune.value=det;
+    const og=ctx.createGain(); og.gain.value=a; o.connect(og); og.connect(lp); o.start(t); o.stop(t+len+0.1);
+  });
+}
+// drone
+let droneOn=false, droneNext=0, droneTimer=null;
+function droneFirst(){
+  let n = cfg.droneNote;
+  if (n==='auto'){ const s=ragaSwaras(); n = s.includes('P')?'P' : s.some(x=>x[0]==='M')?'M' : 'N'; }
+  if (n==='P') return 0.75;
+  if (n==='M'){ const s=ragaSwaras(); return ratio(s.includes('M2')&&!s.includes('M1') ? 6 : 5)/2; }
+  const s=ragaSwaras(); const pos = s.includes('N2')&&!s.includes('N3') ? 10 : 11; return ratio(pos)/2;
+}
+function scheduleDrone(){
+  const CYCLE=4.4;
+  while (droneNext < ctx.currentTime + 1.0){
+    const sa = tonicHz(); const t=droneNext;
+    pluck(sa*droneFirst(), t, droneBus, 0.13, 5.2);
+    pluck(sa, t+1.1, droneBus, 0.12, 5.0);
+    pluck(sa, t+1.65, droneBus, 0.12, 5.0);
+    pluck(sa/2, t+2.75, droneBus, 0.15, 5.6);
+    droneNext += CYCLE;
+  }
+}
+function setDrone(on){
+  ensureAudio(); droneOn=on;
+  if (on){ droneNext = ctx.currentTime+0.05; scheduleDrone(); droneTimer=setInterval(scheduleDrone,250); }
+  else { clearInterval(droneTimer); droneBus.gain.cancelScheduledValues(ctx.currentTime); droneBus.gain.setTargetAtTime(0,ctx.currentTime,0.15); }
+  if (on){ droneBus.gain.cancelScheduledValues(ctx.currentTime); droneBus.gain.setTargetAtTime(cfg.droneVol,ctx.currentTime,0.05); }
+  $('droneBtn').classList.toggle('on',on); poke();
+}
+// reference tones
+let refPlaying = 0, playToken = 0;
+function tone(f, t, dur){
+  if (cfg.tone==='pluck'){ pluck(f,t,refBus,0.32,Math.max(1.6,dur*1.6)); return; }
+  const g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.28,t+0.05); g.gain.setValueAtTime(0.28,t+dur-0.12); g.gain.exponentialRampToValueAtTime(0.0005,t+dur+0.12);
+  const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=2600; lp.connect(g); g.connect(refBus);
+  [['sine',1,1],['triangle',2,0.18],['sine',3,0.08]].forEach(([type,h,a])=>{ const o=ctx.createOscillator(); o.type=type; o.frequency.value=f*h; const og=ctx.createGain(); og.gain.value=a; o.connect(og); og.connect(lp); o.start(t); o.stop(t+dur+0.2); });
+}
+function playSeq(items){
+  ensureAudio(); const tok=++playToken;
+  const dur = items.length===1 ? 1.5 : 60/cfg.bpm;
+  const t0 = ctx.currentTime+0.06;
+  items.forEach((it,i)=>tone(freqOf(it), t0+i*dur, items.length===1?dur:dur*0.92));
+  refPlaying++;
+  return new Promise(res=>{
+    items.forEach((it,i)=>setTimeout(()=>{ if(tok===playToken) highlight(i); }, (0.06+i*dur)*1000));
+    setTimeout(()=>{ refPlaying=Math.max(0,refPlaying-1); if(tok===playToken) highlight(-1); res(); }, (0.06+items.length*dur+0.25)*1000);
+  });
+}
+
+// ---------- state & rendering ----------
+let cur = [], phase = 'prompt', curStep = 0; // phase: prompt | rate
+function ctxLine(){
+  const r = RAGAS.find(x=>x.id===cfg.raga);
+  const n = NOTES[cfg.tonic];
+  return `<b>${r.name}</b> · Sa = ${n[0]} (${n[1]} kattai)${cfg.fine? ` ${cfg.fine>0?'+':''}${cfg.fine}¢`:''}`;
+}
+function renderPrompt(){
+  const big=$('big'); big.classList.toggle('phrase', cur.length>1);
+  big.innerHTML = cur.length ? cur.map((it,i)=>swHTML(it, cur.length>1 && i===curStep && micOn ? 'now':'')).join('') : '<span style="font-size:22px;color:var(--muted)">Pick at least one octave</span>';
+  $('sub2').textContent = cfg.western && cur.length ? cur.map(it=>westernOf(freqOf(it))).join(' · ') : (cur.length===1 && stat(cur[0].pos)?.n ? `${Math.round(stat(cur[0].pos).sum/stat(cur[0].pos).n*100)}% on ${POS_NAMES[cur[0].pos].replace(/(\d)/,'$1')} so far` : '');
+  $('ctx').innerHTML = ctxLine();
+  $('rate').classList.toggle('hidden', phase!=='rate');
+  $('checkBtn').innerHTML = phase==='prompt' ? 'Check <kbd>Space</kbd>' : 'Next <kbd>Space</kbd>';
+}
+function highlight(i){
+  const els = $('big').querySelectorAll('.sw');
+  if (els.length<2) return;
+  els.forEach((e,j)=>{ e.classList.toggle('now', j===i); });
+}
+function setStatus(txt, cls=''){ const s=$('status'); s.textContent=txt; s.className='status '+cls; }
+
+function next(){
+  cur = makePrompt(); curStep=0; holdMs=0; best=null; locked=false;
+  phase = cfg.order==='listen' ? 'rate' : 'prompt';
+  setStatus(cfg.order==='listen' ? 'Listen, then sing it back' : (cur.length>1?'Sing the phrase against the drone':'Sing this swara against the drone'));
+  renderPrompt(); poke();
+  if (cfg.order==='listen' && cur.length) playSeq(cur);
+}
+function check(){
+  if (!cur.length) return;
+  phase='rate'; renderPrompt(); poke();
+  setStatus('Compare: did yours match?');
+  playSeq(cur);
+}
+function rate(v){
+  if (!cur.length) return;
+  record(cur, v); today().reps += cur.length; save(); renderToday();
+  next();
+}
+
+// ---------- hands-free ----------
+let hands = false, handsTok = 0;
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+async function handsLoop(){
+  const tok = ++handsTok;
+  if (!droneOn) setDrone(true);
+  while (hands && tok===handsTok){
+    cur = makePrompt(); curStep=0; holdMs=0; best=null; locked=false; phase='prompt'; renderPrompt();
+    if (!cur.length){ toggleHands(false); return; }
+    if (cfg.order==='listen'){ setStatus('Listen…'); await playSeq(cur); if(!hands||tok!==handsTok) return; }
+    setStatus('Sing now'+(micOn?' — hold it in the green':''));
+    const win = (cfg.gap + (cur.length-1)*0.9)*1000; const t0=performance.now();
+    while (performance.now()-t0 < win){ await sleep(100); if(!hands||tok!==handsTok) return; if(locked && cur.length===1) break; }
+    let v=null;
+    if (micOn && cur.length===1){ v = locked ? 1 : best==null ? null : best<=cfg.tol ? 1 : best<=cfg.tol*2.5 ? 0.5 : 0; }
+    if (cfg.order==='sing'){ setStatus(v===1?'Locked in ✓ — reference:':'Reference:', v===1?'good':''); await playSeq(cur); if(!hands||tok!==handsTok) return; }
+    if (v!=null){ record(cur,v); setStatus(v===1?'Spot on ✓':v===0.5?'Close':'Off — listen again next time', v===1?'good':v===0.5?'mid':'bad'); }
+    today().reps += cur.length; save(); renderToday(); poke();
+    await sleep(700);
+  }
+}
+function toggleHands(on){
+  hands = on; $('handsBtn').classList.toggle('on',on); $('handsBtn').innerHTML = on ? '❚❚ Pause <kbd>H</kbd>' : '▶ Hands-free <kbd>H</kbd>';
+  ['checkBtn','nextBtn'].forEach(id=>$(id).disabled=on);
+  $('rate').style.display = on ? 'none':'';
+  if (on){ ensureAudio(); handsLoop(); } else { handsTok++; playToken++; next(); }
+}
+
+// ---------- mic pitch ----------
+let micOn=false, analyser=null, buf=null, hist=[], holdMs=0, lastT=0, best=null, locked=false;
+async function enableMic(){
+  ensureAudio();
+  try{
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('nomic');
+    const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}});
+    const src = ctx.createMediaStreamSource(stream);
+    analyser = ctx.createAnalyser(); analyser.fftSize=2048; buf=new Float32Array(analyser.fftSize);
+    src.connect(analyser); micOn=true;
+    $('micBtn').textContent='🎙 Mic on'; $('micBtn').classList.add('on'); $('micBtn').disabled=true;
+    $('micmsg').textContent = 'Listening. Use headphones so the mic hears you, not the drone.';
+    requestAnimationFrame(micLoop); renderPrompt();
+  }catch(e){
+    $('micmsg').innerHTML = '<b>The mic is blocked in this view.</b> Open the standalone copy of this app in your browser to use live pitch checking. Until then, train by ear and rate yourself honestly. That works too.';
+    $('micBtn').disabled=true;
+  }
+}
+function detect(b, sr){
+  let rms=0; for(let i=0;i<b.length;i++) rms+=b[i]*b[i]; rms=Math.sqrt(rms/b.length); if(rms<0.012) return -1;
+  let r1=0,r2=b.length-1; const th=0.2;
+  for(let i=0;i<b.length/2;i++) if(Math.abs(b[i])<th){r1=i;break;}
+  for(let i=1;i<b.length/2;i++) if(Math.abs(b[b.length-i])<th){r2=b.length-i;break;}
+  const x=b.slice(r1,r2), n=x.length; const c=new Float32Array(n);
+  for(let i=0;i<n;i++){ let s=0; for(let j=0;j<n-i;j++) s+=x[j]*x[j+i]; c[i]=s; }
+  let d=0; while(d<n-1 && c[d]>c[d+1]) d++;
+  let mx=-1,mp=-1; for(let i=d;i<n;i++) if(c[i]>mx){mx=c[i];mp=i;}
+  if (mp<=0) return -1;
+  let T0=mp; const a=c[T0-1]||0, bb=c[T0], cc=c[T0+1]||0; const A=(a+cc-2*bb)/2, B=(cc-a)/2; if(A) T0=T0-B/(2*A);
+  const f = sr/T0; return (f>65 && f<1200) ? f : -1;
+}
+const fold = c => ((c+600)%1200+1200)%1200-600;
+function micLoop(t){
+  requestAnimationFrame(micLoop);
+  if (!micOn) return;
+  const dt = lastT ? t-lastT : 16; lastT=t;
+  analyser.getFloatTimeDomainData(buf);
+  let f = detect(buf, ctx.sampleRate);
+  if (f>0){ hist.push(f); if(hist.length>5) hist.shift(); } else hist=[];
+  const needle=$('needle');
+  if (hist.length<3 || refPlaying){ needle.classList.add('off'); if(!refPlaying) holdMs=Math.max(0,holdMs-dt*2); $('holdBar').style.width=Math.min(100,holdMs/7)+'%'; if(hist.length<3) $('mread').innerHTML='Pitch check <small>'+(refPlaying?'reference playing…':'sing…')+'</small>'; return; }
+  f = [...hist].sort((a,b)=>a-b)[Math.floor(hist.length/2)];
+  poke();
+  const sa = tonicHz();
+  let target = null;
+  if (cur.length===1) target = cur[0];
+  else if (cur.length>1) target = cur[Math.min(curStep,cur.length-1)];
+  // nearest raga swara (for read-out)
+  const P = pool(); let near=null, nc=1e9;
+  for (const it of P){ const c=fold(1200*Math.log2(f/freqOf(it))); if(Math.abs(c)<Math.abs(nc)){nc=c;near=it;} }
+  let cents = target ? fold(1200*Math.log2(f/freqOf(target))) : nc;
+  needle.classList.remove('off');
+  needle.style.left = (50+Math.max(-50,Math.min(50,cents))) + '%';
+  const nm = near ? swHTML(near).replace(/class="sw[^"]*"/,'class="sw"') : '';
+  $('mread').innerHTML = `${target? 'Target '+swHTML(target).replace(/class="sw[^"]*"/,'class="sw"')+' · ':''}${cents>0?'+':''}${Math.round(cents)}¢ <small>${Math.round(f)} Hz · hearing ${nm}</small>`;
+  if (best==null || Math.abs(cents)<best) best=Math.abs(cents);
+  if (Math.abs(cents)<=cfg.tol){ holdMs+=dt; } else holdMs=Math.max(0,holdMs-dt*1.5);
+  $('holdBar').style.width=Math.min(100,holdMs/7)+'%';
+  if (holdMs>=700 && !locked){
+    if (cur.length>1){
+      curStep++; holdMs=0;
+      if (curStep>=cur.length){ locked=true; setStatus('Phrase locked in ✓','good'); if(!hands) setTimeout(()=>{ if(locked && !hands) rate(1); },900); }
+      else renderPrompt();
+    } else {
+      locked=true; setStatus('Locked in ✓','good');
+      if (!hands) setTimeout(()=>{ if(locked && !hands) rate(1); }, 900);
+    }
+  }
+}
+
+// ---------- practice timer ----------
+let lastAct = 0;
+function poke(){ lastAct = Date.now(); }
+setInterval(()=>{
+  if (document.hidden) return;
+  if (droneOn || hands || Date.now()-lastAct < 45000){ today().sec += 1; save(); if (today().sec%5===0) renderToday(); }
+},1000);
+
+function renderToday(){
+  const d = today(); const min = d.sec/60;
+  $('todayMin').textContent = Math.floor(min); $('goalMin').textContent=cfg.goal; $('todayReps').textContent=d.reps;
+  $('ringArc').setAttribute('stroke-dasharray', `${Math.min(100,min/cfg.goal*100)} 100`);
+  // streak
+  let st=0; const dt=new Date(); const goalS=cfg.goal*60;
+  if ((S.days[dayKey(dt)]?.sec||0) < goalS) dt.setDate(dt.getDate()-1);
+  while ((S.days[dayKey(dt)]?.sec||0) >= goalS){ st++; dt.setDate(dt.getDate()-1); }
+  $('streak').textContent = st;
+  renderHist();
+}
+function renderHist(){
+  const out=[]; const days=[]; const dt=new Date(); dt.setDate(dt.getDate()-13);
+  for(let i=0;i<14;i++){ days.push(new Date(dt)); dt.setDate(dt.getDate()+1); }
+  const mx = Math.max(cfg.goal, ...days.map(d=>(S.days[dayKey(d)]?.sec||0)/60));
+  days.forEach((d,i)=>{ const m=(S.days[dayKey(d)]?.sec||0)/60;
+    out.push(`<div class="d" title="${d.toDateString()}: ${Math.round(m)} min, ${S.days[dayKey(d)]?.reps||0} swaras"><div class="bar ${m>=cfg.goal?'met':''} ${i===13?'today':''}" style="height:${Math.max(3,m/mx*88)}%"></div><div class="lbl">${'SMTWTFS'[d.getDay()]}</div></div>`); });
+  $('hist').innerHTML = out.join('');
+}
+function renderAcc(){
+  const inRaga = new Set(ragaSwaras().map(n=>NAME_POS[n]));
+  const names = ragaSwaras(); const label = p => { const n = names.find(x=>NAME_POS[x]===p) || POS_NAMES[p]; return n[0]+(n[1]?`<sub>${n[1]}</sub>`:''); };
+  $('acc').innerHTML = POS_NAMES.map((_,p)=>{
+    const s = S.stats[p]; let bg='#fff', col='var(--ink)', txt='—';
+    if (s && s.n){ const a=s.ema; txt = Math.round(s.sum/s.n*100)+'% · '+s.n;
+      bg = a>=0.8?'var(--leaf-soft)':a>=0.5?'var(--amber-soft)':'var(--kumkum-soft)'; }
+    return `<div class="acell" style="background:${bg};opacity:${inRaga.has(p)?1:0.45}"><div class="n">${label(p)}</div><div class="p">${txt}</div></div>`;
+  }).join('');
+}
+
+// ---------- settings UI ----------
+function seg(id, key, after){
+  const el=$(id); el.querySelectorAll('button').forEach(b=>{ b.classList.toggle('on', b.dataset.v===cfg[key]); b.onclick=()=>{ cfg[key]=b.dataset.v; el.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); save(); after&&after(); }; });
+}
+function bindSel(id, key, num, after){ const el=$(id); el.value=String(cfg[key]); el.onchange=()=>{ cfg[key]= num?Number(el.value):el.value; save(); after&&after(); }; }
+function bindChk(id,key,after){ const el=$(id); el.checked=!!cfg[key]; el.onchange=()=>{ cfg[key]=el.checked; save(); after&&after(); }; }
+
+$('tonic').innerHTML = NOTES.map((n,i)=>`<option value="${i}">${n[0]} · ${n[1]} kattai · ${Math.round(130.8128*Math.pow(2,i/12))} Hz</option>`).join('');
+$('raga').innerHTML = RAGAS.map(r=>`<option value="${r.id}">${r.name} — ${r.info}</option>`).join('');
+$('len').innerHTML = [3,4,5,6,8].map(n=>`<option>${n}</option>`).join('');
+
+function scaleLine(){
+  const it = ragaSwaras().map(n=>({name:n,pos:NAME_POS[n],oct:0}));
+  $('scaleLine').innerHTML = it.map(x=>swHTML(x)).join(' ') + ' ' + swHTML({name:'S',pos:0,oct:1});
+  $('customBox').style.display = cfg.raga==='custom' ? '' : 'none';
+  $('customChips').innerHTML = POS_NAMES.map((n,p)=>`<button class="chip ${p===0||cfg.custom.includes(p)?'on':''}" data-p="${p}" ${p===0?'disabled':''}>${n[0]}${n[1]?`<sub>${n[1]}</sub>`:''}</button>`).join('');
+  $('customChips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ const p=+c.dataset.p; cfg.custom = cfg.custom.includes(p)? cfg.custom.filter(x=>x!==p) : [...cfg.custom,p]; save(); refresh(); });
+}
+function refresh(){ scaleLine(); renderAcc(); if(!hands) next(); else renderPrompt(); }
+
+bindSel('tonic','tonic',true, refresh);
+$('fine').value=cfg.fine; $('fineVal').textContent=cfg.fine; $('fine').oninput=e=>{ cfg.fine=+e.target.value; $('fineVal').textContent=cfg.fine; $('ctx').innerHTML=ctxLine(); save(); };
+bindSel('raga','raga',false, refresh);
+function octUI(){ $('octChips').querySelectorAll('.chip').forEach(c=>{ const o=+c.dataset.o; c.classList.toggle('on', cfg.oct.includes(o)); c.onclick=()=>{ cfg.oct = cfg.oct.includes(o)? cfg.oct.filter(x=>x!==o) : [...cfg.oct,o]; save(); octUI(); refresh(); }; }); }
+octUI();
+seg('modeSeg','mode', ()=>{ $('phraseOpts').style.display = cfg.mode==='phrase'?'':'none'; refresh(); });
+$('phraseOpts').style.display = cfg.mode==='phrase'?'':'none';
+bindSel('len','len',true, refresh); bindSel('leap','leap',true, refresh);
+seg('orderSeg','order', refresh);
+bindSel('droneNote','droneNote',false); bindSel('tone','tone',false); bindSel('tuning','tuning',false); bindSel('bpm','bpm',true);
+$('droneVol').value=cfg.droneVol; $('droneVol').oninput=e=>{ cfg.droneVol=+e.target.value; if(ctx && droneOn) droneBus.gain.setTargetAtTime(cfg.droneVol,ctx.currentTime,0.05); save(); };
+$('refVol').value=cfg.refVol; $('refVol').oninput=e=>{ cfg.refVol=+e.target.value; if(ctx) refBus.gain.setTargetAtTime(cfg.refVol,ctx.currentTime,0.05); save(); };
+bindChk('showNum','showNum', ()=>{ scaleLine(); renderPrompt(); });
+bindChk('sung','sung', ()=>{ scaleLine(); renderPrompt(); });
+bindChk('western','western', renderPrompt);
+bindSel('gap','gap',true); bindSel('goal','goal',true, renderToday);
+function tolUI(){ $('tolVal').textContent=cfg.tol; const z=$('zone'); z.style.left=(50-cfg.tol)+'%'; z.style.width=(2*cfg.tol)+'%'; }
+$('tol').value=cfg.tol; tolUI(); $('tol').oninput=e=>{ cfg.tol=+e.target.value; tolUI(); save(); };
+if (window.innerWidth<860) $('settingsBox').open=false;
+
+// ---------- controls ----------
+$('droneBtn').onclick=()=>setDrone(!droneOn);
+$('handsBtn').onclick=()=>toggleHands(!hands);
+$('playBtn').onclick=()=>{ poke(); if(cur.length) playSeq(cur); };
+$('checkBtn').onclick=()=>{ if(phase==='prompt') check(); else next(); };
+$('nextBtn').onclick=()=>next();
+$('rate').querySelectorAll('button').forEach(b=>b.onclick=()=>rate(+b.dataset.v));
+$('micBtn').onclick=enableMic;
+$('resetBtn').onclick=()=>$('dlg').classList.add('show');
+$('dlgNo').onclick=()=>$('dlg').classList.remove('show');
+$('dlgYes').onclick=()=>{ S.stats={}; S.days={}; save(); $('dlg').classList.remove('show'); renderAcc(); renderToday(); };
+document.addEventListener('keydown', e=>{
+  if (e.target.closest('select,input')) return;
+  const k=e.key.toLowerCase();
+  if (k===' '){ e.preventDefault(); if(hands) return; phase==='prompt'?check():next(); }
+  else if (k==='enter'){ if(!hands) next(); }
+  else if (k==='r'){ poke(); cur.length && playSeq(cur); }
+  else if (k==='d'){ setDrone(!droneOn); }
+  else if (k==='h'){ toggleHands(!hands); }
+  else if (!hands && phase==='rate' && (k==='1'||k==='2'||k==='3')){ rate([1,0.5,0][+k-1]); }
+});
+
+scaleLine(); renderAcc(); renderToday(); next(); setStatus('Turn on the drone, then sing what you see');
+})();
+</script>
+</body>
+</html>
