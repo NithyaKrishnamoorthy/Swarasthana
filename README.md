@@ -2,7 +2,7 @@
 
 A daily Carnatic practice app for fixing swarasthanas (swara positions). It shows random swaras or short phrases in your chosen raga and shruti, plays a tanpura drone and a reference tone, and can check your pitch live with the microphone.
 
-**Live:** https://nithyakrishnamoorthy.github.io/swarasthana/
+**Live:** https://nithyakrishnamoorthy.github.io/Swarasthana/
 
 - Any shruti (by kattai), with fine tuning
 - 16 ragas, all 12 swarasthanas, or a custom set
