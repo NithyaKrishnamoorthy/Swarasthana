@@ -117,6 +117,30 @@ input[type=range]{width:100%;accent-color:var(--kumkum)}
 .legend{font-size:12.5px;color:var(--muted);margin-top:8px}
 .kb{font-size:12.5px;color:var(--muted);text-align:center;margin-top:14px;position:relative}
 .linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:12.5px;padding:0}
+/* tabs */
+.tabs{display:flex;gap:4px;background:#ece1cf;border-radius:12px;padding:4px;width:max-content;max-width:100%;margin:0 0 18px}
+.tabs a{padding:8px 16px;border-radius:9px;text-decoration:none;color:var(--muted);font-weight:500}
+.tabs a.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08);font-weight:600}
+[hidden]{display:none!important}
+/* film */
+.techs{display:flex;flex-direction:column;gap:6px}
+.tech{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 11px;cursor:pointer}
+.tech .tn{font-weight:600;font-size:14px}
+.tech .td{font-size:12.5px;color:var(--muted)}
+.tech .ts{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.tech.on{border-color:var(--kumkum);background:var(--kumkum-soft)}
+.ftitle{font-family:Fraunces,serif;font-size:24px;font-weight:600;margin:14px 0 2px;position:relative}
+.ftip{color:var(--muted);margin:0 0 10px;max-width:70ch;position:relative}
+.fnotes{font-family:Fraunces,serif;font-size:30px;font-weight:600;display:flex;gap:.45em;flex-wrap:wrap;align-items:baseline;min-height:46px;position:relative}
+.fnotes .sep{color:#cdb9a1;font-weight:400}
+.fnotes .arw{color:var(--gold);font-size:.7em}
+.cvwrap{position:relative;margin-top:8px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+canvas#cv{display:block;width:100%;height:300px}
+.score{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;min-height:38px;position:relative}
+.score .pill b{font-size:16px}
+.legend2{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:8px}
+.legend2 i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.about p{margin:0 0 8px;color:#4d3b2f}
 .dialog{position:fixed;inset:0;background:rgba(42,28,20,.35);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
 .dialog.show{display:flex}
 .dialog .box{background:var(--card);border-radius:var(--r);padding:20px;max-width:360px;border:1px solid var(--line)}
@@ -140,7 +164,55 @@ input[type=range]{width:100%;accent-color:var(--kumkum)}
     </div>
   </header>
 
-  <div class="layout">
+  <nav class="tabs" id="tabs"><a href="#swara" data-v="swara">Swarasthana drill</a><a href="#film" data-v="film">Film vocals</a></nav>
+
+  <div class="layout" id="viewFilm" hidden>
+    <aside class="panel">
+      <h2>Technique</h2>
+      <div class="techs" id="techList"></div>
+      <div class="field">
+        <label>Raga</label>
+        <select id="fRaga"></select>
+      </div>
+      <div class="field">
+        <label>Speed</label>
+        <div class="seg" id="speedSeg"><button data-v="1.5">Slow</button><button data-v="1.2">Medium</button><button data-v="1">Film tempo</button></div>
+      </div>
+      <div class="field">
+        <label>Your turn</label>
+        <label class="check"><input type="checkbox" id="guide"> Play a quiet guide voice while I sing</label>
+      </div>
+      <div class="hint" style="margin-top:12px">Shruti, tuning and volumes come from the Swarasthana drill tab.</div>
+    </aside>
+    <main>
+      <section class="stage">
+        <div class="stagetop">
+          <div class="ctx" id="fctx"></div>
+          <button class="btn" id="droneBtn2">◉ Drone <kbd>D</kbd></button>
+        </div>
+        <div class="ftitle" id="techTitle"></div>
+        <p class="ftip" id="techTip"></p>
+        <div class="fnotes" id="fNotes"></div>
+        <div class="cvwrap"><canvas id="cv"></canvas></div>
+        <div class="legend2"><span><i style="background:var(--gold)"></i>Target pitch (thicker = louder)</span><span><i style="background:var(--ink)"></i>Your voice</span><span><i style="background:#ead9b5;height:8px"></i>Loudness strip</span></div>
+        <div class="status" id="fStatus" style="text-align:center"></div>
+        <div class="controls">
+          <button class="btn" id="fHear">♪ Hear <kbd>R</kbd></button>
+          <button class="btn primary" id="fTurn">Your turn <kbd>Space</kbd></button>
+          <button class="btn" id="fNew">New phrase → <kbd>Enter</kbd></button>
+        </div>
+        <div class="score" id="fScore"></div>
+        <div class="micmsg" id="fMic" style="text-align:center"></div>
+      </section>
+      <section class="panel about" style="margin-top:18px">
+        <h2>Listening homework</h2>
+        <p>Pick a film song you love and listen to one line at a time on repeat. Ask yourself: where does the singer slide instead of step? Which long notes start straight and only then start to shake? Where do they get softer instead of louder? Where does a note fall away at the end of a line?</p>
+        <p>Then come back and drill that technique here until it's automatic. Classical-style swarasthana accuracy (the other tab) is what makes these ornaments sound intentional rather than sloppy.</p>
+      </section>
+    </main>
+  </div>
+
+  <div class="layout" id="viewSwara">
     <aside class="panel">
       <details class="settings" id="settingsBox" open>
         <summary><h2>Practice setup</h2><span class="chev">▾</span></summary>
@@ -411,7 +483,7 @@ function pluck(f, t, bus, amp=0.16, len=4.6){
 let droneOn=false, droneNext=0, droneTimer=null;
 function droneFirst(){
   let n = cfg.droneNote;
-  if (n==='auto'){ const s=ragaSwaras(); n = s.includes('P')?'P' : s.some(x=>x[0]==='M')?'M' : 'N'; }
+  if (n==='auto'){ const s = view==='film' ? filmSwaras() : ragaSwaras(); n = s.includes('P')?'P' : s.some(x=>x[0]==='M')?'M' : 'N'; }
   if (n==='P') return 0.75;
   if (n==='M'){ const s=ragaSwaras(); return ratio(s.includes('M2')&&!s.includes('M1') ? 6 : 5)/2; }
   const s=ragaSwaras(); const pos = s.includes('N2')&&!s.includes('N3') ? 10 : 11; return ratio(pos)/2;
@@ -432,7 +504,7 @@ function setDrone(on){
   if (on){ droneNext = ctx.currentTime+0.05; scheduleDrone(); droneTimer=setInterval(scheduleDrone,250); }
   else { clearInterval(droneTimer); droneBus.gain.cancelScheduledValues(ctx.currentTime); droneBus.gain.setTargetAtTime(0,ctx.currentTime,0.15); }
   if (on){ droneBus.gain.cancelScheduledValues(ctx.currentTime); droneBus.gain.setTargetAtTime(cfg.droneVol,ctx.currentTime,0.05); }
-  $('droneBtn').classList.toggle('on',on); poke();
+  $('droneBtn').classList.toggle('on',on); $('droneBtn2').classList.toggle('on',on); poke();
 }
 // reference tones
 let refPlaying = 0, playToken = 0;
@@ -535,10 +607,10 @@ async function enableMic(){
     src.connect(analyser); micOn=true;
     $('micBtn').textContent='🎙 Mic on'; $('micBtn').classList.add('on'); $('micBtn').disabled=true;
     $('micmsg').textContent = 'Listening. Use headphones so the mic hears you, not the drone.';
-    requestAnimationFrame(micLoop); renderPrompt();
+    requestAnimationFrame(micLoop); renderPrompt(); filmMicUI();
   }catch(e){
     $('micmsg').innerHTML = '<b>The mic is blocked in this view.</b> Open the standalone copy of this app in your browser to use live pitch checking. Until then, train by ear and rate yourself honestly. That works too.';
-    $('micBtn').disabled=true;
+    $('micBtn').disabled=true; micBlocked=true; filmMicUI();
   }
 }
 function detect(b, sr){
@@ -560,6 +632,7 @@ function micLoop(t){
   if (!micOn) return;
   const dt = lastT ? t-lastT : 16; lastT=t;
   analyser.getFloatTimeDomainData(buf);
+  if (view==='film'){ filmMic(buf); return; }
   let f = detect(buf, ctx.sampleRate);
   if (f>0){ hist.push(f); if(hist.length>5) hist.shift(); } else hist=[];
   const needle=$('needle');
@@ -685,6 +758,13 @@ $('dlgYes').onclick=()=>{ S.stats={}; S.days={}; save(); $('dlg').classList.remo
 document.addEventListener('keydown', e=>{
   if (e.target.closest('select,input')) return;
   const k=e.key.toLowerCase();
+  if (view==='film'){
+    if (k===' '){ e.preventDefault(); yourTurn(); }
+    else if (k==='enter'){ newFilm(); }
+    else if (k==='r'){ hearFilm(); }
+    else if (k==='d'){ setDrone(!droneOn); }
+    return;
+  }
   if (k===' '){ e.preventDefault(); if(hands) return; phase==='prompt'?check():next(); }
   else if (k==='enter'){ if(!hands) next(); }
   else if (k==='r'){ poke(); cur.length && playSeq(cur); }
@@ -693,7 +773,273 @@ document.addEventListener('keydown', e=>{
   else if (!hands && phase==='rate' && (k==='1'||k==='2'||k==='3')){ rate([1,0.5,0][+k-1]); }
 });
 
+// =====================================================================
+// FILM VOCALS
+// =====================================================================
+let view = 'swara', micBlocked = false;
+const FILM_RAGAS = [
+  ['kalyani','Kalyani','S R2 G3 M2 P D2 N3'],['khp','Kharaharapriya','S R2 G2 M1 P D2 N2'],['nata','Natabhairavi','S R2 G2 M1 P D1 N2'],
+  ['keeravani','Keeravani','S R2 G2 M1 P D1 N3'],['charukesi','Charukesi','S R2 G3 M1 P D1 N2'],['shanmukha','Shanmukhapriya','S R2 G2 M2 P D1 N2'],
+  ['mohanam','Mohanam','S R2 G3 P D2'],['hindolam','Hindolam','S G2 M1 D1 N2'],['hamsa','Hamsadhwani','S R2 G3 P N3'],
+  ['madhya','Madhyamavati','S R2 M1 P N2'],['abhogi','Abhogi','S R2 G2 M1 D2'],['shank','Shankarabharanam','S R2 G3 M1 P D2 N3'],
+  ['mmg','Mayamalavagowla','S R1 G3 M1 P D1 N3'],['hari','Harikambhoji','S R2 G3 M1 P D2 N2'],['todi','Hanumatodi','S R1 G2 M1 P D1 N2'],
+  ['simhe','Simhendramadhyamam','S R2 G2 M2 P D1 N3'],
+];
+const TECHS = [
+  {id:'meend', name:'Meend (glide)', desc:'Slide smoothly between two swaras',
+   tip:'Keep the voice going the whole way, with no gap or bump. Travel at an even speed and land exactly on the target swara, then hold it steady. Practise slow first: a sloppy glide that overshoots is the most common film-singing fault.'},
+  {id:'kan', name:'Kan swara (grace note)', desc:'A quick touch of the note above before landing',
+   tip:'The grace note is a flick, not a note of its own: barely there, then settle on the main swara. If you can hear two separate notes, it is too slow. This is what gives film melodies their “sweetness”.'},
+  {id:'vibrato', name:'Delayed vibrato', desc:'Start a long note straight, then let it shimmer',
+   tip:'Hit the note dead straight first, then let a gentle, even vibrato bloom out of it. The centre of the vibrato must stay on the swarasthana. Wobbling under the note sounds flat.'},
+  {id:'swell', name:'Swell & fade', desc:'Soft → loud → soft on a single note',
+   tip:'Change only the volume, never the pitch. Most singers go sharp as they get louder and flat as they fade, so watch the gold line stay level. Support from the breath, not the throat.'},
+  {id:'murki', name:'Murki (quick turn)', desc:'A fast flick around the note: above, on, below, on',
+   tip:'Light and quick, like a little curl in the line. Every note of the turn should still be audible and in tune. Practise on “Slow” until it is clean, then speed up.'},
+  {id:'run', name:'Akaaram run', desc:'A fast scale run on “aa” ending in a held note',
+   tip:'Keep the “aa” vowel open and each note distinct, without aspirating (no “ha-ha-ha”). Land on the last note confidently and let it ring with vibrato.'},
+  {id:'scoop', name:'Scoop & fall-off', desc:'Slide up into a note; let it fall away at the end',
+   tip:'The scoop is short and starts only a little below the note. Arrive quickly, then hold true. The fall-off at the end of a line is relaxed: let the pitch drop as the breath fades, without pushing.'},
+  {id:'sangati', name:'Sangati ladder', desc:'One phrase, three times: plain → ornamented → full',
+   tip:'Film songs often repeat a line with more decoration each time. Sing version one perfectly plain, then add grace notes, then add the turn, vibrato and fall-off. The underlying swaras never change.'},
+];
+cfg.filmRaga = cfg.filmRaga || 'kalyani'; cfg.tech = cfg.tech || 'meend'; cfg.fSpeed = cfg.fSpeed || '1.5'; if (cfg.guide==null) cfg.guide=false;
+S.film = S.film || {};
+
+function filmSwaras(){ return (FILM_RAGAS.find(r=>r[0]===cfg.filmRaga)||FILM_RAGAS[0])[2].split(' '); }
+const centsPos = pos => 1200*Math.log2(ratio(pos));
+function degItem(i){ const sw=filmSwaras(), n=sw.length; const oct=Math.floor(i/n), name=sw[((i%n)+n)%n]; return {name,pos:NAME_POS[name],oct}; }
+function degC(i){ const it=degItem(i); return centsPos(it.pos)+1200*it.oct; }
+const rint = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+
+class Builder{
+  constructor(k){ this.k=k; this.t=0.05; this.pts=[{t:0,c:0,a:0,v:0}]; this.silent=true; this.notes=[]; }
+  push(c,a,v=0){ this.pts.push({t:this.t,c,a,v}); }
+  note(i, dur, a=0.8, {glide=0.03, v=0, show=true, c=null}={}){
+    const cc = c==null ? degC(i) : c;
+    if (this.pts.length===1) this.pts[0].c = cc;
+    if (this.silent){ this.push(cc,0,v); this.t+=0.035; this.push(cc,a,v); }
+    else { this.t+=glide; this.push(cc,a,v); }
+    this.t += Math.max(0, dur-(this.silent?0.035:glide)); this.push(cc,a,v);
+    this.silent=false; if(show) this.notes.push(i); return this;
+  }
+  ramp(c, dur, a, v=0){ this.t+=dur; this.push(c,a,v); return this; }
+  rest(dur){ const l=this.pts[this.pts.length-1]; this.t+=0.06; this.push(l.c,0,l.v); this.t+=dur; this.silent=true; return this; }
+  sep(){ this.notes.push('|'); return this; }
+  done(){ const l=this.pts[this.pts.length-1]; if(l.a>0){ this.t+=0.12; this.push(l.c,0,l.v); } return {pts:this.pts, dur:this.t, notes:this.notes}; }
+}
+function gen(tech){
+  const n = filmSwaras().length, k = +cfg.fSpeed, B = new Builder(k), f = Math.sqrt(k);
+  const mid = () => rint(1, n);  // madhya range, up to Ṡ
+  if (tech==='meend'){
+    const a=mid(); let dir=Math.random()<.5?1:-1; const st=rint(1,3); let b=a+dir*st; if(b<0||b>n+2){ dir=-dir; b=a+dir*st; }
+    B.note(a,0.75*k).note(b,0.05,0.85,{glide:0.55*k}).note(b,1.0*k,0.8,{glide:0.01,show:false});
+    const back = Math.random()<.5; if(back) B.note(a,0.05,0.8,{glide:0.5*k}).note(a,0.8*k,0.75,{glide:0.01,show:false});
+    B.notes.splice(1,0,'→'); if(back) B.notes.splice(3,0,'→');
+  } else if (tech==='kan'){
+    const s=Math.random()<.5?1:-1; let a=mid(); if(a+2*s<0) a=2; if(a+2*s>n+2) a=n;
+    for(let j=0;j<4;j++){ const d=a+j*s; if(j===3){ B.note(d,1.0*k,0.75); break; }
+      B.note(d+1,0.075*f,0.7,{show:false}).note(d,0.55*k,0.8,{glide:0.035}); }
+  } else if (tech==='vibrato'){
+    const a=rint(Math.max(1,n-2), n+1);
+    B.note(a-1,0.35*k,0.7).note(a,0.9*k,0.82,{glide:0.08});
+    B.ramp(degC(a),0.6*k,0.85,32).ramp(degC(a),1.1*k,0.7,36).ramp(degC(a),0.35,0,36);
+  } else if (tech==='swell'){
+    const a=rint(2,n);
+    B.note(a,0.05,0.1); B.ramp(degC(a),1.6*k,1.0).ramp(degC(a),1.6*k,0.06);
+  } else if (tech==='murki'){
+    const a=rint(1,n); const q=0.1*f;
+    B.note(a-1,0.45*k,0.75).note(a,0.45*k,0.8,{glide:0.06});
+    B.note(a+1,q,0.78,{show:false,glide:0.02}).note(a,q,0.78,{show:false,glide:0.02}).note(a-1,q,0.78,{show:false,glide:0.02}).note(a,0.8*k,0.8,{show:false,glide:0.02});
+    B.notes.push('⟲');
+  } else if (tech==='run'){
+    const len=rint(6,8), up=Math.random()<.6; const start= up? rint(0,2) : rint(n, n+2);
+    for(let j=0;j<len;j++){ const d= up? start+j : start-j; B.note(d,0.14*f,0.8,{glide:0.025}); }
+    const last= up? start+len-1 : start-len+1;
+    B.ramp(degC(last),0.6*k,0.8,0).ramp(degC(last),0.9*k,0.6,30).ramp(degC(last),0.25,0,30);
+  } else if (tech==='scoop'){
+    const a=rint(2,n), b=a+(Math.random()<.5?-1:-2);
+    B.note(a,0.04,0.55,{c:degC(a)-110,show:false}).ramp(degC(a),0.16,0.85).ramp(degC(a),1.0*k,0.8).ramp(degC(a)-260,0.45,0.02); B.notes.push(a,'↘'); B.rest(0.35);
+    B.note(b,0.04,0.55,{c:degC(b)-110,show:false}).ramp(degC(b),0.16,0.85).ramp(degC(b),1.1*k,0.8).ramp(degC(b)-300,0.5,0.02); B.notes.push(b,'↘');
+  } else { // sangati
+    const m=[rint(1,n-1)]; for(let j=1;j<4;j++){ let d=m[j-1]+[-2,-1,1,1,2][rint(0,4)]; d=Math.max(0,Math.min(n+1,d)); if(d===m[j-1]) d+= d<n?1:-1; m.push(d); }
+    const L=0.45*k;
+    m.forEach((d,j)=>B.note(d, j===3?0.9*k:L, 0.8)); B.rest(0.6*k); B.sep();
+    m.forEach((d,j)=>{ if(j===1||j===3) B.note(d+1,0.075*f,0.7,{show:false}); B.note(d, j===3?0.9*k:L, 0.8,{glide:0.035}); }); B.rest(0.6*k); B.sep();
+    m.forEach((d,j)=>{ const q=0.09*f;
+      if(j===1) B.note(d+1,0.075*f,0.7,{show:false});
+      if(j===2){ B.note(d,0.2*k,0.8).note(d+1,q,0.78,{show:false,glide:0.02}).note(d,q,0.78,{show:false,glide:0.02}).note(d-1,q,0.78,{show:false,glide:0.02}).note(d,0.15*k,0.8,{show:false,glide:0.02}); return; }
+      if(j===3){ B.note(d,0.5*k,0.82,{glide:0.035}); B.ramp(degC(d),0.6*k,0.75,30).ramp(degC(d)-240,0.4,0.02,30); return; }
+      B.note(d,L,0.8,{glide:0.035}); });
+  }
+  return B.done();
+}
+
+// ----- voice synth -----
+function voice(pts, t0, gainMul=1){
+  const dur = pts[pts.length-1].t;
+  const out=ctx.createGain(); out.gain.setValueAtTime(0,t0); out.connect(refBus); fOuts.push(out);
+  const cs=ctx.createConstantSource(); cs.offset.setValueAtTime(pts[0].c,t0);
+  const lfo=ctx.createOscillator(); lfo.frequency.value=5.6; const vg=ctx.createGain(); vg.gain.setValueAtTime(0,t0); lfo.connect(vg);
+  const src=ctx.createGain(); src.gain.value=1;
+  const sa=tonicHz();
+  [[-5,'sawtooth'],[5,'sawtooth'],[0,'triangle']].forEach(([det,type])=>{ const o=ctx.createOscillator(); o.type=type; o.frequency.value=sa; o.detune.value=det; cs.connect(o.detune); vg.connect(o.detune); o.connect(src); o.start(t0); o.stop(t0+dur+0.3); });
+  const sum=ctx.createGain(); sum.gain.value=1; sum.connect(out);
+  [[760,5,2.6],[1180,6,1.4],[2750,9,0.7]].forEach(([fq,q,g])=>{ const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=fq; bp.Q.value=q; const gg=ctx.createGain(); gg.gain.value=g; src.connect(bp); bp.connect(gg); gg.connect(sum); });
+  const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=600; const lg=ctx.createGain(); lg.gain.value=0.35; src.connect(lp); lp.connect(lg); lg.connect(sum);
+  for (const p of pts){ const at=t0+p.t; cs.offset.linearRampToValueAtTime(p.c,at); out.gain.linearRampToValueAtTime(p.a*0.42*gainMul,at); vg.gain.linearRampToValueAtTime(p.v||0,at); }
+  cs.start(t0); lfo.start(t0); cs.stop(t0+dur+0.3); lfo.stop(t0+dur+0.3);
+}
+
+// ----- contour math -----
+function sampleAt(pts,t){
+  if (t<=pts[0].t) return pts[0];
+  for (let i=1;i<pts.length;i++){ const b=pts[i]; if (t<=b.t){ const a=pts[i-1]; const u=(b.t-a.t)>0?(t-a.t)/(b.t-a.t):1; return {c:a.c+(b.c-a.c)*u, a:a.a+(b.a-a.a)*u, v:a.v+(b.v-a.v)*u}; } }
+  return pts[pts.length-1];
+}
+
+// ----- state -----
+let fx=null, fBusy=0, fHead=-1, fTrace=[], fRec=null, fHist=[], fTok=0, fOuts=[];
+function stopFilm(){ fTok++; fOuts.forEach(o=>{ try{o.disconnect();}catch(e){} }); fOuts=[]; if(fBusy===1) refPlaying=Math.max(0,refPlaying-1); fBusy=0; fRec=null; fHead=-1; }
+function techObj(){ return TECHS.find(t=>t.id===cfg.tech)||TECHS[0]; }
+function renderTechs(){
+  $('techList').innerHTML = TECHS.map(t=>{ const s=S.film[t.id]; return `<button class="tech ${t.id===cfg.tech?'on':''}" data-t="${t.id}"><span><div class="tn">${t.name}</div><div class="td">${t.desc}</div></span><span class="ts">${s&&s.n? `${s.n}× · best ${s.best}%`:''}</span></button>`; }).join('');
+  $('techList').querySelectorAll('.tech').forEach(b=>b.onclick=()=>{ cfg.tech=b.dataset.t; save(); renderTechs(); newFilm(); });
+}
+function newFilm(){
+  stopFilm();
+  fx = gen(cfg.tech); fTrace=[]; fHead=-1; poke();
+  const t=techObj(); $('techTitle').textContent=t.name; $('techTip').textContent=t.tip;
+  const r=FILM_RAGAS.find(r=>r[0]===cfg.filmRaga); const nn=NOTES[cfg.tonic];
+  $('fctx').innerHTML = `<b>${r[1]}</b> · Sa = ${nn[0]} (${nn[1]} kattai) · ${({'1.5':'slow','1.2':'medium','1':'film tempo'})[cfg.fSpeed]}`;
+  $('fNotes').innerHTML = fx.notes.map(x=> x==='|' ? '<span class="sep">|</span>' : typeof x==='string' ? `<span class="arw">${x}</span>` : swHTML(degItem(x))).join(' ');
+  $('fScore').innerHTML=''; setF('Hear it, then take your turn');
+  drawFilm();
+}
+function setF(t,cls=''){ const s=$('fStatus'); s.textContent=t; s.className='status '+cls; }
+function animate(t0ms, durS, onEnd){
+  const tok=fTok;
+  const step=()=>{ if(tok!==fTok) return; const t=(performance.now()-t0ms)/1000; fHead=t; drawFilm(); if (t<durS) requestAnimationFrame(step); else { fHead=-1; drawFilm(); onEnd&&onEnd(); } };
+  requestAnimationFrame(step);
+}
+function hearFilm(){
+  if (fBusy || !fx) return; ensureAudio(); poke(); fBusy=1; refPlaying++;
+  const lead=0.08; voice(fx.pts, ctx.currentTime+lead);
+  setF('Listen…');
+  animate(performance.now()+lead*1000, fx.dur, ()=>{ fBusy=0; refPlaying=Math.max(0,refPlaying-1); setF('Now your turn (Space)'); });
+}
+function click(t, hi){ const o=ctx.createOscillator(); const g=ctx.createGain(); o.frequency.value=hi?1600:1100; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.25,t+0.005); g.gain.exponentialRampToValueAtTime(0.0001,t+0.06); o.connect(g); g.connect(master); o.start(t); o.stop(t+0.08); }
+function yourTurn(){
+  if (fBusy || !fx) return; ensureAudio(); poke(); fBusy=2; fTrace=[]; fHist=[]; $('fScore').innerHTML='';
+  const beat=0.55, now=ctx.currentTime+0.05;
+  for(let i=0;i<3;i++) click(now+i*beat, false);
+  const start = now+3*beat;
+  const tok=fTok;
+  [3,2,1].forEach((n,i)=>setTimeout(()=>{ if(tok===fTok) setF(n+'…'); }, (0.05+i*beat)*1000));
+  if (cfg.guide) voice(fx.pts, start, 0.35);
+  setTimeout(()=>{ if(tok!==fTok) return;
+    setF(micOn ? 'Sing! Follow the gold line' : 'Sing! Follow the moving line'); fRec={t0:performance.now()};
+    animate(performance.now(), fx.dur+0.2, finishTurn);
+  }, (start-ctx.currentTime)*1000);
+}
+function filmMic(b){
+  if (!fRec || fBusy!==2) return;
+  const t=(performance.now()-fRec.t0)/1000;
+  let rms=0; for(let i=0;i<b.length;i++) rms+=b[i]*b[i]; rms=Math.sqrt(rms/b.length);
+  const db = 20*Math.log10(rms+1e-6);
+  let f=detect(b, ctx.sampleRate);
+  if (f>0){ fHist.push(f); if(fHist.length>3) fHist.shift(); } else fHist=[];
+  let c=null;
+  if (fHist.length>=2){ const fm=[...fHist].sort((a,b)=>a-b)[Math.floor(fHist.length/2)]; const tg=sampleAt(fx.pts,t).c; let cu=1200*Math.log2(fm/tonicHz()); cu -= 1200*Math.round((cu-tg)/1200); c=cu; }
+  fTrace.push({t,c,db});
+}
+function finishTurn(){
+  fBusy=0; fRec=null; today().reps += 1; save(); renderToday();
+  if (!micOn){ setF('How did it feel? Hear it again or try once more.'); return; }
+  const voiced = fTrace.filter(p=>p.c!=null);
+  if (voiced.length<10){ setF("I didn't hear you. Sing a little louder or move closer to the mic", 'bad'); return; }
+  // pitch: compare to vibrato-free centre while target is sounding
+  let ps=0, pn=0;
+  for (const p of voiced){ const s=sampleAt(fx.pts,p.t); if (s.a<0.15) continue; const tol = 25 + (s.v||0); const err=Math.max(0,Math.abs(p.c-s.c)-tol*0.4); ps += Math.max(0,1-err/120); pn++; }
+  const pitch = pn? Math.round(ps/pn*100) : 0;
+  // dynamics: correlation of loudness envelope with target amplitude
+  const dbs=fTrace.map(p=>p.db); const hi=Math.max(...dbs), lo=Math.max(hi-40, Math.min(...dbs));
+  const xs=[], ys=[]; for (const p of fTrace){ xs.push(Math.max(0,(p.db-lo)/(hi-lo||1))); ys.push(sampleAt(fx.pts,p.t).a); }
+  const mean=a=>a.reduce((x,y)=>x+y,0)/a.length; const mx=mean(xs), my=mean(ys);
+  let sxy=0,sxx=0,syy=0; for(let i=0;i<xs.length;i++){ sxy+=(xs[i]-mx)*(ys[i]-my); sxx+=(xs[i]-mx)**2; syy+=(ys[i]-my)**2; }
+  const r = sxx&&syy ? sxy/Math.sqrt(sxx*syy) : 0; const dyn = Math.round(Math.max(0,r)*100);
+  const total = Math.round(pitch*0.65 + dyn*0.35);
+  const s = S.film[cfg.tech] || (S.film[cfg.tech]={n:0,best:0,last:0}); s.n++; s.last=total; s.best=Math.max(s.best,total); save(); renderTechs();
+  const cls = v=> v>=80?'good':v>=55?'mid':'bad';
+  $('fScore').innerHTML = `<div class="pill">Pitch shape <b class="${''}">${pitch}%</b></div><div class="pill">Dynamics <b>${dyn}%</b></div><div class="pill">Overall <b>${total}%</b></div>`;
+  setF(total>=80?'Beautiful. Try a new phrase or speed up':total>=55?'Getting there. Look at where your line leaves the gold':'Hear it again on Slow and match one part at a time', cls(total));
+  drawFilm();
+}
+
+// ----- drawing -----
+function drawFilm(){
+  const cv=$('cv'); if (!cv || view!=='film' || !fx) return;
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if (cv.width!==Math.round(W*dpr)) { cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); }
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
+  const padL=44, padR=12, top=12, strip=46, pH=H-top-strip-18;
+  const T=fx.dur+0.25;
+  let lo=Infinity, hi=-Infinity; for(const p of fx.pts){ if(p.a>0||true){ lo=Math.min(lo,p.c); hi=Math.max(hi,p.c); } }
+  lo-=160; hi+=160;
+  const X=t=>padL+(t/T)*(W-padL-padR), Y=c=>top+pH-(c-lo)/(hi-lo)*pH;
+  // swara grid
+  g.font='13px Fraunces, serif'; g.textAlign='right'; g.textBaseline='middle';
+  for (let i=-12;i<30;i++){ const c=degC(i); if(c<lo||c>hi) continue; const it=degItem(i);
+    g.strokeStyle = it.pos===0 ? '#e2cfae' : '#f1e8da'; g.lineWidth = it.pos===0?1.5:1; g.beginPath(); g.moveTo(padL,Y(c)); g.lineTo(W-padR,Y(c)); g.stroke();
+    g.fillStyle='#8a7562'; const L=(cfg.sung?SUNG[it.name[0]]:it.name[0])+(cfg.showNum&&it.name[1]?it.name[1]:''); g.fillText(L+(it.oct>0?'̇':it.oct<0?'̣':''), padL-8, Y(c)); }
+  // target contour
+  const dt=0.008; let prev=null;
+  for (let t=0;t<=fx.dur;t+=dt){ const s=sampleAt(fx.pts,t); const c=s.c + (s.v? s.v*Math.sin(2*Math.PI*5.6*t):0);
+    if (prev && s.a>0.02 && prev.a>0.02){ g.strokeStyle=`rgba(200,150,27,${0.35+0.65*s.a})`; g.lineWidth=2+7*s.a; g.lineCap='round'; g.beginPath(); g.moveTo(X(prev.t),Y(prev.c)); g.lineTo(X(t),Y(c)); g.stroke(); }
+    prev={t,c,a:s.a}; }
+  // loudness strip
+  const sy=H-strip-4, sh=strip-8;
+  g.fillStyle='#faf4ea'; g.fillRect(padL,sy,W-padL-padR,sh);
+  g.beginPath(); g.moveTo(X(0),sy+sh); for(let t=0;t<=fx.dur;t+=0.02){ g.lineTo(X(t), sy+sh-sampleAt(fx.pts,t).a*sh); } g.lineTo(X(fx.dur),sy+sh); g.closePath(); g.fillStyle='#ead9b5'; g.fill();
+  g.fillStyle='#8a7562'; g.font='11px "DM Sans", sans-serif'; g.textAlign='right'; g.fillText('vol', padL-8, sy+sh/2);
+  // user trace
+  if (fTrace.length){
+    g.strokeStyle='#2a1c14'; g.lineWidth=2.4; g.lineJoin='round'; g.beginPath(); let pen=false;
+    for (const p of fTrace){ if(p.c==null||p.c<lo-200||p.c>hi+200){ pen=false; continue; } const x=X(p.t), y=Y(p.c); if(!pen){ g.moveTo(x,y); pen=true; } else g.lineTo(x,y); }
+    g.stroke();
+    const dbs=fTrace.map(p=>p.db); const dh=Math.max(...dbs), dl=Math.max(dh-40,Math.min(...dbs));
+    g.strokeStyle='rgba(42,28,20,.75)'; g.lineWidth=1.5; g.beginPath(); fTrace.forEach((p,i)=>{ const v=Math.max(0,(p.db-dl)/(dh-dl||1)); const x=X(p.t), y=sy+sh-v*sh; i?g.lineTo(x,y):g.moveTo(x,y); }); g.stroke();
+  }
+  // playhead
+  if (fHead>=0){ g.strokeStyle='#a3302b'; g.lineWidth=2; g.beginPath(); g.moveTo(X(fHead),top); g.lineTo(X(fHead),H-6); g.stroke(); }
+}
+function filmMicUI(){
+  const el=$('fMic'); if(!el) return;
+  if (micOn) el.innerHTML='🎙 Mic on: your pitch and loudness will be traced over the target and scored.';
+  else if (micBlocked) el.innerHTML='The mic is blocked in this view, so practise by following the moving line. Open the app on its own site to get your voice traced and scored.';
+  else el.innerHTML='<button class="btn" id="fMicBtn">🎙 Enable mic to trace & score your voice</button>';
+  const b=$('fMicBtn'); if(b) b.onclick=enableMic;
+}
+
+// ----- wiring -----
+$('fRaga').innerHTML = FILM_RAGAS.map(r=>`<option value="${r[0]}">${r[1]}</option>`).join('');
+$('fRaga').value=cfg.filmRaga; $('fRaga').onchange=e=>{ cfg.filmRaga=e.target.value; save(); newFilm(); };
+seg('speedSeg','fSpeed', newFilm);
+bindChk('guide','guide');
+$('fHear').onclick=hearFilm; $('fTurn').onclick=yourTurn; $('fNew').onclick=newFilm; $('droneBtn2').onclick=()=>setDrone(!droneOn);
+window.addEventListener('resize', drawFilm);
+function setView(v){
+  if (v!=='film') v='swara';
+  if (v===view && fx) { drawFilm(); return; }
+  if (hands) toggleHands(false);
+  stopFilm(); view=v; $('viewSwara').hidden = v!=='swara'; $('viewFilm').hidden = v!=='film';
+  $('tabs').querySelectorAll('a').forEach(a=>a.classList.toggle('on', a.dataset.v===v));
+  if (v==='film'){ renderTechs(); filmMicUI(); if(!fx) newFilm(); else drawFilm(); }
+}
+window.addEventListener('hashchange', ()=>setView(location.hash.slice(1)));
+
 scaleLine(); renderAcc(); renderToday(); next(); setStatus('Turn on the drone, then sing what you see');
+setView(location.hash.slice(1));
 })();
 </script>
 </body>
